@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { User } = require("../models/models");
+const { User } = require("../models");
 
 // Register
 exports.register = async (req, res) => {
@@ -15,7 +15,7 @@ exports.register = async (req, res) => {
     const hash = await bcrypt.hash(password, 5);
     const user = await User.create({ username, password: hash });
 
-    const token = generateJwtToken(user.id, user.username);
+    const token = generateJwtToken(user.id);
 
     return res.json({ token, user, message: "Регистрация прошла успешно." });
   } catch (error) {
@@ -41,7 +41,7 @@ exports.login = async (req, res) => {
       return res.json({ message: "неверный пароль." });
     }
 
-    const token = generateJwtToken(user.id, user.username);
+    const token = generateJwtToken(user.id);
     return res.json({ token, user, message: "Вы вошли в систему" });
   } catch (error) {
     return res.json({ message: error.message });
@@ -51,20 +51,22 @@ exports.login = async (req, res) => {
 //getMe
 exports.getMe = async (req, res) => {
   try {
-    const user = User.findById(req.user.id);
+    const user = User.findByPk(req.userId);
     if (!user) {
       return res.json({ message: "такого юзера не существует" });
     }
 
-    const token = generateJwtToken(req.user.id, req.user.username);
+    const token = generateJwtToken(req.userId);
+    console.log("jhiuhi");
     return res.json({ user, token });
   } catch (error) {
+    console.log(error);
     return res.json({ message: "Нет доступа." });
   }
 };
 
-const generateJwtToken = (id, username) => {
-  return jwt.sign({ id: id, username }, process.env.SECRET_KEY, {
+const generateJwtToken = (id) => {
+  return jwt.sign({ id: id }, process.env.SECRET_KEY, {
     expiresIn: "24h",
   });
 };
