@@ -7,6 +7,17 @@ const User = sequelize.define("user", {
   password: { type: DataTypes.STRING },
 });
 
+const Post = sequelize.define("post", {
+  username: { type: DataTypes.STRING },
+  title: { type: DataTypes.STRING, allowNull: false },
+  text: { type: DataTypes.STRING, allowNull: false },
+  imgUrl: { type: DataTypes.STRING, default: "" },
+  views: { type: DataTypes.INTEGER, default: 0 },
+});
+
+User.hasMany(Post, { foreignKey: "author" });
+Post.belongsTo(User);
+
 // const Basket = sequelize.define("basket", {
 //   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 // });
@@ -48,9 +59,6 @@ const User = sequelize.define("user", {
 //   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
 // });
 
-// User.hasOne(Basket);
-// Basket.belongsTo(User);
-
 // User.hasMany(Rating);
 // Rating.belongsTo(User);
 
@@ -77,7 +85,7 @@ const User = sequelize.define("user", {
 
 module.exports = {
   User,
-  //   Basket,
+  Post,
   //   BasketDevice,
   //   Device,
   //   Type,
