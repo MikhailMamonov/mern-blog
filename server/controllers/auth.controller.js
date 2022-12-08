@@ -57,7 +57,6 @@ exports.getMe = async (req, res) => {
     }
 
     const token = generateJwtToken(req.userId);
-    console.log("jhiuhi");
     return res.json({ user, token });
   } catch (error) {
     console.log(error);
