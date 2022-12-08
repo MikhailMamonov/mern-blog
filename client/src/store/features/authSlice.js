@@ -1,5 +1,5 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "../../utils/axios";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from '../../utils/axios';
 const initialState = {
   user: null,
   token: null,
@@ -8,15 +8,15 @@ const initialState = {
 };
 
 export const registerUser = createAsyncThunk(
-  "auth/registerUser",
+  'auth/registerUser',
   async ({ username, password }) => {
     try {
-      const { data } = await axios.post("auth/register", {
+      const { data } = await axios.post('auth/register', {
         username,
         password,
       });
       if (data.token) {
-        window.localStorage.setItem("token", data.token);
+        window.localStorage.setItem('token', data.token);
       }
       return data;
     } catch (e) {
@@ -26,15 +26,15 @@ export const registerUser = createAsyncThunk(
 );
 
 export const loginUser = createAsyncThunk(
-  "auth/loginUser",
+  'auth/loginUser',
   async ({ username, password }) => {
     try {
-      const { data } = await axios.post("auth/login", {
+      const { data } = await axios.post('auth/login', {
         username,
         password,
       });
       if (data.token) {
-        window.localStorage.setItem("token", data.token);
+        window.localStorage.setItem('token', data.token);
       }
       return data;
     } catch (e) {
@@ -43,11 +43,9 @@ export const loginUser = createAsyncThunk(
   }
 );
 
-export const getMe = createAsyncThunk("auth/me", async () => {
+export const getMe = createAsyncThunk('auth/me', async () => {
   try {
-    console.log("getMe");
-    const { data } = await axios.get("auth/me");
-    console.log(data);
+    const { data } = await axios.get('auth/me');
     return data;
   } catch (error) {
     console.log(error);
@@ -55,7 +53,7 @@ export const getMe = createAsyncThunk("auth/me", async () => {
 });
 
 export const authSlice = createSlice({
-  name: "auth",
+  name: 'auth',
   initialState,
   reducers: {
     logout: (state) => {
