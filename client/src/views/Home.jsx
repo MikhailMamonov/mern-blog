@@ -1,18 +1,19 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { PopularPosts } from "../components/PopularPosts";
-import { PostItem } from "../components/PostItem";
-import { getAllPosts } from "../store/features/postSlice";
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { PopularPosts } from '../components/PopularPosts';
+import { PostItem } from '../components/PostItem';
+import { getAllPosts } from '../store/features/postSlice';
 
 export const Home = () => {
   const dispatch = useDispatch();
   const { posts, popularPosts } = useSelector((state) => state.post);
 
   useEffect(() => {
+    console.log('useEffect');
     dispatch(getAllPosts());
   }, [dispatch]);
 
-  console.log(posts);
+  console.log(popularPosts);
   if (!posts.length) {
     return (
       <div className="text-xl text-center text-white py-10">

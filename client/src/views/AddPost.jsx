@@ -1,33 +1,32 @@
-import React from "react";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { createPost } from "../store/features/postSlice";
-import { useNavigate } from "react-router-dom";
+import React from 'react';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { createPost } from '../store/features/postSlice';
+import { useNavigate } from 'react-router-dom';
 
 export const AddPost = () => {
-  const [title, setTitle] = useState("");
-  const [text, setText] = useState("");
-  const [image, setImage] = useState("");
+  const [title, setTitle] = useState('');
+  const [text, setText] = useState('');
+  const [image, setImage] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const submitHandler = () => {
     try {
       const data = new FormData();
-      console.log(title, text);
-      data.append("title", title);
-      data.append("text", text);
-      data.append("image", image);
+      data.append('title', title);
+      data.append('text', text);
+      data.append('image', image);
       dispatch(createPost(data));
-      navigate("/");
+      navigate('/posts');
     } catch (error) {
       console.log(error);
     }
   };
 
   const clearHandler = () => {
-    setTitle("");
-    setText("");
+    setTitle('');
+    setText('');
   };
 
   return (
@@ -40,7 +39,7 @@ export const AddPost = () => {
         />
       </label>
       <div className="flex object-cover py-2">
-        {" "}
+        {' '}
         {image && <img src={URL.createObjectURL(image)} alt={image.name} />}
       </div>
       <label className="text-xs text-white opacity-70">

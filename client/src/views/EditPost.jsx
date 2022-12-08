@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router';
+import { updatePost } from '../store/features/postSlice';
 
 export const EditPost = () => {
   const [title, setTitle] = useState('');

@@ -32,7 +32,6 @@ exports.createPost = async (req, res) => {
         author: req.userId,
       });
 
-      console.log(newPostWithoutImage);
       res.json(newPostWithoutImage);
     } catch (error) {
       return res.json({ message: `Что-тоо пошло не так ${error}` });
@@ -66,7 +65,6 @@ exports.getById = async (req, res) => {
       { views: Sequelize.literal('COALESCE(views, 0) + 1') },
       { where: { id: req.params.id } }
     ).then(() => Post.findOne({ where: { id: req.params.id }, raw: true }));
-    console.log('post', post);
     return res.json(post);
   } catch (error) {
     return res.json({ message: `Что-тоо пошло не так ${error}` });
