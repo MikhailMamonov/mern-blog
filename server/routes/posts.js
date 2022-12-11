@@ -26,5 +26,8 @@ router.delete('/:id', checkAuth, postController.deleteById);
 //update post by id
 //http://localhost:8080/api/posts/:id
 router.put('/:id', checkAuth, postController.updatePost);
-module.exports = router;
+
+//get post by id
+//http://localhost:8080/api/posts/comments/:id
+router.get('/comments/:id', postController.getPostComments);
 module.exports = router;

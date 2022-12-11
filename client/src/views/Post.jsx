@@ -11,11 +11,18 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { removePost } from '../store/features/postSlice';
 import { toast } from 'react-toastify';
+import {
+  createComment,
+  getCommentsByPost,
+} from '../store/features/commentSlice';
+import { CommentItem } from '../components/CommentItem';
 
 export const Post = () => {
   const [post, setPost] = useState(null);
+  const [comment, setComment] = useState('');
   const { id: postId } = useParams();
   const { user } = useSelector((state) => state.auth);
+  const { comments } = useSelector((state) => state.comment);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   let fetchPost = useCallback(async () => {
@@ -23,15 +30,32 @@ export const Post = () => {
     setPost(data);
   }, [postId]);
 
+  let fetchComments = useCallback(async () => {
+    dispatch(getCommentsByPost(postId));
+  }, [postId, dispatch]);
+
   useEffect(() => {
     fetchPost();
   }, [fetchPost]);
+
+  useEffect(() => {
+    fetchComments();
+  }, [fetchComments]);
 
   const removeHandler = () => {
     try {
       dispatch(removePost(postId));
       toast('Пост успешно удален');
       navigate('/posts');
+    } catch (error) {
+      toast(error);
+    }
+  };
+
+  const submitCommentHandler = () => {
+    try {
+      dispatch(createComment({ comment, postId }));
+      setComment('');
     } catch (error) {
       toast(error);
     }
@@ -92,7 +116,9 @@ export const Post = () => {
               {user?.id === post.author && (
                 <div className="flex gap-3 mt-4">
                   <button className="flex items-center justify-center gap-2 text-white opacity-50">
-                    <AiTwotoneEdit />
+                    <Link to={`/${postId}/edit`}>
+                      <AiTwotoneEdit />
+                    </Link>
                   </button>
                   <button className="flex items-center justify-center gap-2 text-white opacity-50">
                     <AiFillDelete onClick={removeHandler} />
@@ -102,7 +128,29 @@ export const Post = () => {
             </div>
           </div>
         </div>
-        <div className="w-1/3"></div>
+        <div className="w-1/3 p-8 flex flex-col bg-gray-700 gap-10 rounded-sm">
+          <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
+            <input
+              type="text"
+              value={comment}
+              placeholder="Comment"
+              onChange={(e) => {
+                setComment(e.target.value);
+              }}
+              className="w-full text-black rounded-sm bg-gray-400 outline-none border p-2 text-xs placeholder:text-gray-700"
+            />
+            <button
+              onClick={submitCommentHandler}
+              className="flex justify-center items-center bg-gray-600 text-xs text-white rounded-sm py-2 px-4 "
+              type="submit"
+            >
+              Отправить
+            </button>
+          </form>
+          {comments?.map((cmt) => {
+            return <CommentItem key={comment.id} comment={cmt} />;
+          })}
+        </div>
       </div>
     </div>
   );
