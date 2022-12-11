@@ -7,7 +7,6 @@ export const Posts = () => {
   const [posts, setPosts] = useState([]);
   const fetchPosts = async () => {
     const { data } = await axios.get('/posts/user/me');
-    console.log('myPosts', data);
     setPosts(data);
   };
 

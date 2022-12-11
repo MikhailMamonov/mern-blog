@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../utils/axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router';
@@ -89,7 +89,7 @@ export const EditPost = () => {
           onClick={submitHandler}
           className="flex justify-center items-center bg-gray-600 text-xs text-white rounded-sm py-2 px-4"
         >
-          Добавить
+          Применить
         </button>
 
         <button

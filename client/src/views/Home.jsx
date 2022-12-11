@@ -9,11 +9,9 @@ export const Home = () => {
   const { posts, popularPosts } = useSelector((state) => state.post);
 
   useEffect(() => {
-    console.log('useEffect');
     dispatch(getAllPosts());
   }, [dispatch]);
 
-  console.log(popularPosts);
   if (!posts.length) {
     return (
       <div className="text-xl text-center text-white py-10">

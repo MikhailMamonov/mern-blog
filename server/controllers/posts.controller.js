@@ -1,4 +1,4 @@
-const { Post, User } = require('../models');
+const { Post, User, Comment } = require('../models');
 const multiparty = require('multiparty');
 const { Sequelize } = require('sequelize');
 
@@ -11,7 +11,6 @@ exports.createPost = async (req, res) => {
     try {
       if (err) return res.json({ message: `Что-тоо пошло не так ${err}` });
       const user = await User.findByPk(req.userId);
-      console.log('files', files, 'fields', fields);
       if (files.image) {
         const imagePath = files.image[0].path;
         const imageFileName = imagePath.slice(imagePath.lastIndexOf('\\') + 1);
@@ -31,7 +30,6 @@ exports.createPost = async (req, res) => {
         imgUrl: '',
         author: req.userId,
       });
-
       res.json(newPostWithoutImage);
     } catch (error) {
       return res.json({ message: `Что-тоо пошло не так ${error}` });
@@ -114,7 +112,7 @@ exports.updatePost = async (req, res) => {
     try {
       if (err) return res.json({ message: `Что-тоо пошло не так ${err}` });
       const { title, text, id } = fields;
-      const post = await Post.findByPk(id);
+      const post = await Post.findByPk(id[0]);
 
       if (files.image) {
         const imagePath = files.image[0].path;
@@ -123,11 +121,32 @@ exports.updatePost = async (req, res) => {
         post.imgUrl = imageFileName || '';
       }
 
-      post.title = title;
-      post.text = text;
+      post.title = title[0];
+      post.text = text[0];
+      console.log(post.text);
+      await post.save();
       res.json(post);
     } catch (error) {
+      console.log(error);
       return res.json({ message: `Что-тоо пошло не так ${error}` });
     }
   });
+};
+
+// Get comments for post
+//http://localhost:8080/api/posts/comments/:id
+exports.getPostComments = async (req, res) => {
+  try {
+    const post = await Post.findByPk(req.params.id, {
+      include: [{ model: Comment, as: 'comments' }],
+    });
+    const list = await Promise.all(
+      post.comments.map((comment) => {
+        return Comment.findByPk(comment.id);
+      })
+    );
+    return res.json(list);
+  } catch (error) {
+    return res.json({ message: `Что-тоо пошло не так ${error}` });
+  }
 };
