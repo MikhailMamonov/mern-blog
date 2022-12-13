@@ -18,6 +18,9 @@ const Post = sequelize.define('post', {
 const Comment = sequelize.define('comment', {
   comment: { type: DataTypes.STRING(8000), allowNull: false },
 });
+const Like = sequelize.define('like', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+});
 
 User.hasMany(Post, { foreignKey: 'author' });
 Post.belongsTo(User, { foreignKey: 'author' });
@@ -28,8 +31,15 @@ Comment.belongsTo(User, { foreignKey: 'author' });
 Post.hasMany(Comment, { foreignKey: 'post_id' });
 Comment.belongsTo(Post, { foreignKey: 'post_id' });
 
+User.hasMany(Like, { foreignKey: 'author' });
+Like.belongsTo(User, { foreignKey: 'author' });
+
+Post.hasMany(Like, { foreignKey: 'post_id' });
+Like.belongsTo(Post, { foreignKey: 'post_id' });
+
 module.exports = {
   User,
   Post,
   Comment,
+  Like,
 };

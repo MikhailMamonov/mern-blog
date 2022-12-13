@@ -1,23 +1,21 @@
-import axios from './../utils/axios';
 import React, { useEffect } from 'react';
-import { useState } from 'react';
 import { PostItem } from '../components/PostItem';
+import { useDispatch, useSelector } from 'react-redux';
+import { getMyPosts } from '../store/features/postSlice';
 
 export const Posts = () => {
-  const [posts, setPosts] = useState([]);
-  const fetchPosts = async () => {
-    const { data } = await axios.get('/posts/user/me');
-    setPosts(data);
-  };
+  const dispatch = useDispatch();
+  const { posts } = useSelector((state) => state.post);
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    dispatch(getMyPosts());
+  }, [dispatch]);
 
   return (
     <div className="w-1/2 mx-auto py-10 flex flex-col gap-10">
       {posts?.map((post, idx) => (
-        <PostItem post={post} key={idx}></PostItem>
+        <PostItem user={user} post={post} key={idx}></PostItem>
       ))}
     </div>
   );

@@ -30,4 +30,8 @@ router.put('/:id', checkAuth, postController.updatePost);
 //get post by id
 //http://localhost:8080/api/posts/comments/:id
 router.get('/comments/:id', postController.getPostComments);
+
+//like post
+//http://localhost:8080/api/posts/like/:id
+router.post('/like/:id', checkAuth, postController.likePost);
 module.exports = router;

@@ -66,7 +66,7 @@ export const Post = () => {
       <div className="text-xl text-center text-white py-10">Загрузка...</div>
     );
   }
-  console.log(user);
+
   return (
     <div>
       <button className="flex justify-center bg-gray-600 text-xs text-white rounded-sm py-2 px-4">
@@ -147,8 +147,8 @@ export const Post = () => {
               Отправить
             </button>
           </form>
-          {comments?.map((cmt) => {
-            return <CommentItem key={comment.id} comment={cmt} />;
+          {comments?.map((cmt, idx) => {
+            return <CommentItem key={idx} comment={cmt} />;
           })}
         </div>
       </div>

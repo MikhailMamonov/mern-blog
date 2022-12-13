@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { PopularPosts } from '../components/PopularPosts';
 import { PostItem } from '../components/PostItem';
@@ -7,6 +8,8 @@ import { getAllPosts } from '../store/features/postSlice';
 export const Home = () => {
   const dispatch = useDispatch();
   const { posts, popularPosts } = useSelector((state) => state.post);
+
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(getAllPosts());
@@ -25,7 +28,7 @@ export const Home = () => {
       <div className="flex justify-between gap-8">
         <div className="flex flex-col gap-10 basis-4/5">
           {posts?.map((post, idx) => (
-            <PostItem key={idx} post={post} />
+            <PostItem user={user} key={idx} post={post} />
           ))}
         </div>
         <div className="basis-1/5">

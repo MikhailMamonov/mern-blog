@@ -1,17 +1,22 @@
-import React from 'react';
-import { AiFillEye, AiOutlineMessage } from 'react-icons/ai';
+import React, { useEffect } from 'react';
+import { useState } from 'react';
+import {
+  AiFillEye,
+  AiOutlineMessage,
+  AiTwotoneLike,
+  AiOutlineDislike,
+} from 'react-icons/ai';
 import Moment from 'react-moment';
-import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { checkIsAuth } from '../store/features/authSlice';
+import { updatePost } from '../store/features/postSlice';
+import { LikeButton } from './LikeButton';
 
-export const PostItem = ({ post }) => {
-  if (!post) {
-    return (
-      <div className="text-xl text-center text-white py-10">Загрузка...</div>
-    );
-  }
+export const PostItem = ({ post, user }) => {
   return (
-    <Link to={`/${post.id}`}>
-      <div className="flex flex-col basis-1/4 flex-grow">
+    <div className="flex flex-col basis-1/4 flex-grow">
+      <Link to={`/${post.id}`}>
         <div
           className={post.imgUrl ? 'flex rouded-sm h-80' : 'flex rounded-sm'}
         >
@@ -33,16 +38,19 @@ export const PostItem = ({ post }) => {
         <p className="text-white opacity-60 text-xs pt-4 line-clamp-3">
           {post.text}
         </p>
-
-        <div className="flex gap-3 items-center mt-2">
-          <button className="flex items-center justify-center gap-2 text-xs text-white opacity-50">
-            <AiFillEye /> <span>{post.views}</span>
-          </button>
-          <button className="flex items-center justify-center gap-2 text-xs text-white opacity-50">
-            <AiOutlineMessage /> <span>{post.comments?.length || 0} </span>
-          </button>
-        </div>
+      </Link>
+      <div className="flex gap-3 items-center mt-2">
+        <button className="flex items-center justify-center gap-2 text-xs text-white opacity-50">
+          <AiFillEye /> <span>{post.views}</span>
+        </button>
+        <button className="flex items-center justify-center gap-2 text-xs text-white opacity-50">
+          <AiOutlineMessage /> <span>{post.comments?.length || 0} </span>
+        </button>
+        <LikeButton post={post} user={user} />
+        <button className="flex items-center justify-center gap-2 text-xs text-white opacity-50">
+          <AiOutlineDislike /> <span>{post.dislikes?.length || 0}</span>
+        </button>
       </div>
-    </Link>
+    </div>
   );
 };

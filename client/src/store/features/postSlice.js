@@ -22,7 +22,15 @@ export const createPost = createAsyncThunk(
 export const getAllPosts = createAsyncThunk('post/getAllPosts', async () => {
   try {
     const { data } = await axios.get('/posts');
-    console.log(data);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+export const getMyPosts = createAsyncThunk('post/getMyPosts', async () => {
+  try {
+    const { data } = await axios.get('/posts/user/me');
     return data;
   } catch (error) {
     console.log(error);
@@ -49,6 +57,15 @@ export const updatePost = createAsyncThunk(
     }
   }
 );
+
+export const likePost = createAsyncThunk('post/likePost', async (likedPost) => {
+  try {
+    const { data } = await axios.post(`/posts/like/${likedPost}`);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 export const postSlice = createSlice({
   name: 'post',
@@ -78,6 +95,18 @@ export const postSlice = createSlice({
     [getAllPosts.rejected]: (state) => {
       state.loading = false;
     },
+    //Get all posts
+    [getMyPosts.pending]: (state) => {
+      state.loading = true;
+    },
+    [getMyPosts.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.posts = action.payload;
+      console.log(state.posts);
+    },
+    [getMyPosts.rejected]: (state) => {
+      state.loading = false;
+    },
     //Remove post
     [removePost.pending]: (state) => {
       state.loading = true;
@@ -101,6 +130,20 @@ export const postSlice = createSlice({
       state.posts[index] = action.payload;
     },
     [updatePost.rejected]: (state) => {
+      state.loading = false;
+    },
+    //Like post
+    [likePost.pending]: (state) => {
+      state.loading = true;
+    },
+    [likePost.fulfilled]: (state, action) => {
+      state.loading = false;
+      const index = state.posts.findIndex(
+        (post) => post.id === action.payload.id
+      );
+      state.posts[index] = action.payload;
+    },
+    [likePost.rejected]: (state) => {
       state.loading = false;
     },
   },
