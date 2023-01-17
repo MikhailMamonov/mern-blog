@@ -1,14 +1,15 @@
-import axios from '../utils/axios';
-import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate, useParams } from 'react-router';
-import { updatePost } from '../store/features/postSlice';
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+
+import axios from "../utils/axios";
+import { updatePost } from "../store/features/postSlice";
+import { useDispatch } from "react-redux";
 
 export const EditPost = () => {
-  const [title, setTitle] = useState('');
-  const [text, setText] = useState('');
-  const [oldImage, setOldImage] = useState('');
-  const [newImage, setNewImage] = useState('');
+  const [title, setTitle] = useState("");
+  const [text, setText] = useState("");
+  const [oldImage, setOldImage] = useState("");
+  const [newImage, setNewImage] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { id: postId } = useParams();
@@ -22,20 +23,20 @@ export const EditPost = () => {
   const submitHandler = () => {
     try {
       const updatedPost = new FormData();
-      updatedPost.append('title', title);
-      updatedPost.append('text', text);
-      updatedPost.append('id', postId);
-      updatedPost.append('image', newImage);
+      updatedPost.append("title", title);
+      updatedPost.append("text", text);
+      updatedPost.append("id", postId);
+      updatedPost.append("image", newImage);
       dispatch(updatePost(updatedPost));
-      navigate('/posts');
+      navigate("/posts");
     } catch (error) {
       console.log(error);
     }
   };
 
   const clearFormHandler = () => {
-    setTitle('');
-    setText('');
+    setTitle("");
+    setText("");
   };
 
   useEffect(() => {
@@ -49,18 +50,21 @@ export const EditPost = () => {
           type="file"
           onChange={(e) => {
             setNewImage(e.target.files[0]);
-            setOldImage('');
+            setOldImage("");
           }}
           className="hidden"
         />
       </label>
       <div className="flex object-cover py-2">
-        {' '}
+        {" "}
         {newImage && (
           <img src={URL.createObjectURL(newImage)} alt={newImage.name} />
         )}
         {oldImage && (
-          <img src={`http://localhost:8080/${oldImage}`} alt={oldImage.name} />
+          <img
+            src={`${window.location.protocol}//${process.env.REACT_APP_BASE_URL}:8080/${oldImage}`}
+            alt={oldImage.name}
+          />
         )}
       </div>
       <label className="text-xs text-white opacity-70">

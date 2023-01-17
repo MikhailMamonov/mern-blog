@@ -1,25 +1,26 @@
-import axios from './../utils/axios';
-import React, { useCallback, useEffect, useState } from 'react';
 import {
+  AiFillDelete,
   AiFillEye,
   AiOutlineMessage,
-  AiFillDelete,
   AiTwotoneEdit,
-} from 'react-icons/ai';
-import Moment from 'react-moment';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { removePost } from '../store/features/postSlice';
-import { toast } from 'react-toastify';
+} from "react-icons/ai";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   createComment,
   getCommentsByPost,
-} from '../store/features/commentSlice';
-import { CommentItem } from '../components/CommentItem';
+} from "../store/features/commentSlice";
+import { useDispatch, useSelector } from "react-redux";
+
+import { CommentItem } from "../components/CommentItem";
+import Moment from "react-moment";
+import axios from "./../utils/axios";
+import { removePost } from "../store/features/postSlice";
+import { toast } from "react-toastify";
 
 export const Post = () => {
   const [post, setPost] = useState(null);
-  const [comment, setComment] = useState('');
+  const [comment, setComment] = useState("");
   const { id: postId } = useParams();
   const { user } = useSelector((state) => state.auth);
   const { comments } = useSelector((state) => state.comment);
@@ -45,8 +46,8 @@ export const Post = () => {
   const removeHandler = () => {
     try {
       dispatch(removePost(postId));
-      toast('Пост успешно удален');
-      navigate('/posts');
+      toast("Пост успешно удален");
+      navigate("/posts");
     } catch (error) {
       toast(error);
     }
@@ -55,7 +56,7 @@ export const Post = () => {
   const submitCommentHandler = () => {
     try {
       dispatch(createComment({ comment, postId }));
-      setComment('');
+      setComment("");
     } catch (error) {
       toast(error);
     }
@@ -70,7 +71,7 @@ export const Post = () => {
   return (
     <div>
       <button className="flex justify-center bg-gray-600 text-xs text-white rounded-sm py-2 px-4">
-        <Link className="flex" to={'/'}>
+        <Link className="flex" to={"/"}>
           Назад
         </Link>
       </button>
@@ -79,12 +80,12 @@ export const Post = () => {
           <div className="flex flex-col basis-1/4 flex-grow">
             <div
               className={
-                post?.imgUrl ? 'flex rouded-sm h-80' : 'flex rounded-sm'
+                post?.imgUrl ? "flex rouded-sm h-80" : "flex rounded-sm"
               }
             >
               {post?.imgUrl && (
                 <img
-                  src={`http://localhost:8080/${post.imgUrl}`}
+                  src={`${window.location.protocol}//${process.env.REACT_APP_BASE_URL}:${process.env.REACT_APP_PORT}/${post.imgUrl}`}
                   alt="img"
                   className="object-cover w-full"
                 />
@@ -109,7 +110,7 @@ export const Post = () => {
                   <AiFillEye /> <span>{post.views}</span>
                 </button>
                 <button className="flex items-center justify-center gap-2 text-xs text-white opacity-50">
-                  <AiOutlineMessage />{' '}
+                  <AiOutlineMessage />{" "}
                   <span>{post.comments?.length || 0} </span>
                 </button>
               </div>

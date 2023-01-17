@@ -1,28 +1,29 @@
-import React, { useEffect } from 'react';
-import { useState } from 'react';
 import {
   AiFillEye,
+  AiOutlineDislike,
   AiOutlineMessage,
   AiTwotoneLike,
-  AiOutlineDislike,
-} from 'react-icons/ai';
-import Moment from 'react-moment';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import { checkIsAuth } from '../store/features/authSlice';
-import { updatePost } from '../store/features/postSlice';
-import { LikeButton } from './LikeButton';
+} from "react-icons/ai";
+import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { LikeButton } from "./LikeButton";
+import Moment from "react-moment";
+import { checkIsAuth } from "../store/features/authSlice";
+import { updatePost } from "../store/features/postSlice";
+import { useState } from "react";
 
 export const PostItem = ({ post, user }) => {
   return (
     <div className="flex flex-col basis-1/4 flex-grow">
       <Link to={`/${post.id}`}>
         <div
-          className={post.imgUrl ? 'flex rouded-sm h-80' : 'flex rounded-sm'}
+          className={post.imgUrl ? "flex rouded-sm h-80" : "flex rounded-sm"}
         >
           {post.imgUrl && (
             <img
-              src={`http://localhost:8080/${post.imgUrl}`}
+              src={`${window.location.protocol}//${process.env.REACT_APP_BASE_URL}:${process.env.REACT_APP_PORT}/${post.imgUrl}`}
               alt="img"
               className="object-cover w-full"
             />
