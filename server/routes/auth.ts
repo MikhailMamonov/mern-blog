@@ -1,8 +1,8 @@
-const { Router } = require("express");
-var express = require("express");
+import authController from "../controllers/auth.controller";
+import checkAuthMiddldware from "../middlewares/auth.middleware";
+import express from "express";
+
 var router = express.Router();
-const authController = require("../controllers/auth.controller");
-const checkAuthMiddldware = require("../middlewares/checkAuth");
 
 //http://localhost:8080/api/auth/me
 router.get("/me", checkAuthMiddldware, authController.getMe);
@@ -13,4 +13,4 @@ router.post("/register", authController.register);
 //http://localhost:8080/api/auth/login
 router.post("/login", authController.login);
 
-module.exports = router;
+export default router;

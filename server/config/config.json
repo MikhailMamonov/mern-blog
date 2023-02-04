@@ -2,8 +2,8 @@
   "development": {
     "username": "postgres",
     "password": "root",
-    "database": "mevn-blog",
-    "host": "127.0.0.1",
+    "database": "mern_blog",
+    "host": "80.78.246.204",
     "dialect": "postgres",
     "port": "5432"
   },
@@ -23,7 +23,6 @@
            "require": true,
            "rejectUnauthorized": false
     }
-    },
-    "use_env_variable": "DATABASE_URL"
+    }
   }
 }
