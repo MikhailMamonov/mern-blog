@@ -9,6 +9,8 @@ import { Sequelize } from "sequelize";
 import { UriPostIdModel } from "../dtos/posts/UriPostIdModel";
 import multiparty from "multiparty";
 import authMiddleware from '../middlewares/auth.middleware';
+import { validationMiddleware } from "../middlewares/validation.middleware";
+import { CreatePostDto } from "../dtos/posts/CreatePostDto";
 
 class PostController implements Controller {
   public path = "/posts";
@@ -23,11 +25,12 @@ class PostController implements Controller {
     this.router.get(`${this.path}/:id`, this.getById);
     this.router
       .all(`${this.path}/*`, authMiddleware)
-      .patch(`${this.path}/:id`, validationMiddleware(CreatePostDto, true), this.modifyPost)
-      .delete(`${this.path}/:id`, this.deletePost)
+      .patch(`${this.path}/:id`, validationMiddleware(CreatePostDto, true), this.updatePost)
+      .delete(`${this.path}/:id`, this.deleteById)
       .post(this.path, authMiddleware, validationMiddleware(CreatePostDto), this.createPost);
   }
-  private createPost= async(req: RequestWithAuthorization, res: Response) => {
+  
+  createPost= async(req: RequestWithAuthorization, res: Response) => {
     let form = new multiparty.Form({
       uploadDir: "uploads",
     });
@@ -95,8 +98,8 @@ class PostController implements Controller {
       }
     });
   }
-
- private getAll =  async(req: Request, res: Response)=> {
+  
+  getAll =  async(req: Request, res: Response)=> {
     try {
       const posts = await Post.findAll({
         order: [["createdAt", "ASC"]],
@@ -125,7 +128,7 @@ class PostController implements Controller {
     }
   }
 
-private getById= async(req: Request<UriPostIdModel>, res: Response) {
+  getById= async(req: Request<UriPostIdModel>, res: Response) =>{
     try {
       const post = await Post.update(
         { views: Sequelize.literal("COALESCE(views, 0) + 1") },
@@ -149,15 +152,16 @@ private getById= async(req: Request<UriPostIdModel>, res: Response) {
   // get my posts
   //http
   //localhost:8080/api/posts/user/me
-private getMyPosts=  async (req: RequestWithAuthorization, res: Response) {
+    public getMyPosts = async (req: RequestWithAuthorization, res: Response) => {
     try {
       const user = await User.findByPk(req.userId, {
         include: [{ model: Post, as: "posts" }],
         order: [[Post, "createdAt", "ASC"]],
       });
+      
       if (user) {
         const list = await Promise.all(
-          user.posts.map((post) => {
+          (user.posts || []).map((post: any) => {
             return Post.findByPk(post.id, {
               include: [
                 { model: Comment, as: "comments" },
@@ -168,20 +172,22 @@ private getMyPosts=  async (req: RequestWithAuthorization, res: Response) {
         );
 
         return res.json(list);
-      } else throw new Error("Post not found");
+      } else {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
     } catch (error) {
       console.log(error);
-      return res.json({ message: `Что-тоо пошло не так ${error}` });
+      return res.status(500).json({ message: `Что-то пошло не так: ${error}` });
     }
   }
 
   // delete by id
   //http
   //localhost:8080/api/posts/:id
-  private async deleteById(
-    req: RequestWithAuthorization<UriPostIdModel>,
+  deleteById = async (
+    req: RequestWithAuthorization,
     res: Response
-  ) {
+  ) => {
     try {
       await Post.destroy({ where: { id: req.params.id } }).then((count) => {
         return count > 0
@@ -196,7 +202,7 @@ private getMyPosts=  async (req: RequestWithAuthorization, res: Response) {
   // update by id
   //http
   //localhost:8080/api/posts/:id
-  private async updatePost(req: RequestWithAuthorization, res: Response) {
+   updatePost = async (req: RequestWithAuthorization, res: Response) => {
     let form = new multiparty.Form({
       uploadDir: "uploads",
     });
@@ -231,8 +237,8 @@ private getMyPosts=  async (req: RequestWithAuthorization, res: Response) {
   // Get comments for post
   //http
   //localhost:8080/api/posts/comments/:id
-  private getPostComments = async(
-    req: RequestWithAuthorization<UriPostIdModel>,
+   public getPostComments = async (
+    req: RequestWithAuthorization,
     res: Response
   ) => {
     try {
@@ -242,24 +248,27 @@ private getMyPosts=  async (req: RequestWithAuthorization, res: Response) {
           { model: Like, as: "likes" },
         ],
       });
+      
       if (post) {
         const list = await Promise.all(
-          post.comments.map((comment) => {
+          (post.comments || []).map((comment: any) => {
             return Comment.findByPk(comment.id);
           })
         );
         return res.json(list);
-      } else throw new Error("Post not found");
+      } else {
+        return res.status(404).json({ message: "Пост не найден" });
+      }
     } catch (error) {
-      return res.json({ message: `Что-тоо пошло не так ${error}` });
+      return res.status(500).json({ message: `Что-то пошло не так: ${error}` });
     }
   }
 
   // Post like for post
   //http
   //localhost:8080/api/posts/like/:id
-  private likePost = async(
-    req: RequestWithAuthorization<UriPostIdModel>,
+    public likePost = async (
+    req: RequestWithAuthorization,
     res: Response<PostViewModel | InfoViewModel>
   ) => {
     try {
@@ -269,18 +278,21 @@ private getMyPosts=  async (req: RequestWithAuthorization, res: Response) {
           { model: Like, as: "likes" },
         ],
       });
+      
       if (post) {
-        if (post.likes.find((like) => like.user.id === req.userId)) {
-          // Post already likes, unlike it
-          await Like.destroy({ where: { author: req.userId } });
+        if (post.likes?.find((like: any) => like.user?.id === req.userId)) {
+          // Пост уже лайкнут, убираем лайк
+          await Like.destroy({ where: { author: req.userId, post_id: post.id } });
         } else {
-          // Not liked, like post
+          // Не лайкнут, ставим лайк
           await Like.create({
-            post_id: req.params.id,
+            post_id: post.id,
             author: req.userId,
           });
         }
-      } else throw new Error("Post not found");
+      } else {
+        return res.status(404).json({ message: "Пост не найден" });
+      }
 
       await post.reload();
 
@@ -296,7 +308,7 @@ private getMyPosts=  async (req: RequestWithAuthorization, res: Response) {
       });
     } catch (error) {
       console.log(error);
-      return res.json({ message: `Что-тоо пошло не так ${error}` });
+      return res.status(500).json({ message: `Что-то пошло не так: ${error}` });
     }
   }
 }

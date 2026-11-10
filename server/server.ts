@@ -1,3 +1,4 @@
+import "./models";
 import App from "./app";
 import AuthenticationController from "./controllers/auth.controller";
 import CommentController from "./controllers/comments.controller";

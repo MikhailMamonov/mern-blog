@@ -1,28 +1,28 @@
 {
   "development": {
     "username": "postgres",
-    "password": "root",
+    "password": "postgres",
     "database": "mern_blog",
-    "host": "80.78.246.204",
+    "host": "127.0.0.1",
     "dialect": "postgres",
-    "port": "5432"
+    "port": 5432
   },
   "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
+    "username": "postgres",
+    "password": "postgres",
+    "database": "mern_blog_test",
     "host": "127.0.0.1",
-    "dialect": "postgres"
+    "dialect": "postgres",
+    "port": 5432
   },
   "production": {
+    "use_env_variable": "DATABASE_URL",
     "dialect": "postgres",
-    "protocol": "postgres",
-    "host": "https://online-shop-node-js-reactjs.herokuapp.com/",
     "dialectOptions": {
-         "ssl": {
-           "require": true,
-           "rejectUnauthorized": false
-    }
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
     }
   }
 }

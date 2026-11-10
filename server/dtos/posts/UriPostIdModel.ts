@@ -1,1 +1,1 @@
-export type UriPostIdModel = { id: number };
+export type UriPostIdModel = { id: string };

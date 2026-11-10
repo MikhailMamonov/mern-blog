@@ -1,11 +1,13 @@
 import checkAuth from "../middlewares/auth.middleware";
-import commentsController from "./../controllers/comments.controller";
+import CommentController from "./../controllers/comments.controller";
 import express from "express";
 
-var router = express.Router();
+const router = express.Router();
 
-//create post
-//http://localhost:8080/api/comments
-router.post("/", checkAuth, commentsController.createComment);
+// СОЗДАЕМ ЭКЗЕМПЛЯР контроллера
+const commentsController = new CommentController();
+
+// Используем .bind() для сохранения контекста this
+router.post("/", checkAuth, commentsController.createComment.bind(commentsController));
 
 export default router;

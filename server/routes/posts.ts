@@ -1,38 +1,21 @@
 import checkAuth from "../middlewares/auth.middleware";
 import express from "express";
-import postController from "./../controllers/posts.controller";
+// Импортируем как именованный экспорт (не default)
+import { PostController } from "./../controllers/posts.controller";
 
-var router = express.Router();
+const router = express.Router();
 
-//create post
-//http://localhost:8080/api/posts
-router.post("/", checkAuth, postController.createPost);
+// СОЗДАЕМ ЭКЗЕМПЛЯР контроллера
+const postController = new PostController();
 
-//get all posts
-//http://localhost:8080/api/posts
-router.get("/", postController.getAll);
+// Используем .bind() для сохранения контекста this
+router.post("/", checkAuth, postController.createPost.bind(postController));
+router.get("/", postController.getAll.bind(postController));
+router.get("/:id", postController.getById.bind(postController));
+router.get("/user/me", checkAuth, postController.getMyPosts.bind(postController));
+router.delete("/:id", checkAuth, postController.deleteById.bind(postController));
+router.put("/:id", checkAuth, postController.updatePost.bind(postController));
+router.get("/comments/:id", postController.getPostComments.bind(postController));
+router.post("/like/:id", checkAuth, postController.likePost.bind(postController));
 
-//get post by id
-//http://localhost:8080/api/posts/:id
-router.get("/:id", postController.getById);
-
-// get my posts
-//http://localhost:8080/api/posts/user/me
-router.get("/user/me", checkAuth, postController.getMyPosts);
-
-//delete post by id
-//http://localhost:8080/api/posts/:id
-router.delete("/:id", checkAuth, postController.deleteById);
-
-//update post by id
-//http://localhost:8080/api/posts/:id
-router.put("/:id", checkAuth, postController.updatePost);
-
-//get post by id
-//http://localhost:8080/api/posts/comments/:id
-router.get("/comments/:id", postController.getPostComments);
-
-//like post
-//http://localhost:8080/api/posts/like/:id
-router.post("/like/:id", checkAuth, postController.likePost);
 export default router;
